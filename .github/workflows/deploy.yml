@@ -36,9 +36,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: 'demarche-numerique/demarche.numerique.gouv.fr'
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: 'Checkout repo "https://github.com/hnoel/demarche.numerique.gouv.fr" into "./hnoel"'
-      - name: Merge previous checkout repository with current repository
         uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
