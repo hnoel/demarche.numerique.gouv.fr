@@ -21,7 +21,7 @@ FROM base AS builder
 
 RUN apt-get update && \
     apt-get install -y curl build-essential git libpq-dev libicu-dev zlib1g-dev libyaml-dev gnupg zip nodejs && \
-    (curl -sL "https://deb.nodesource.com/setup_18.x" | bash -) && \
+    (curl -sL "https://deb.nodesource.com/setup_22.x" | bash -) && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -194,7 +194,7 @@ blabla+blabla\
     YAHOO_CLIENT_SECRET=""
 #----- minimum set of packages
 RUN apt-get update && apt-get install -y curl git postgresql-client libicu76 poppler-utils imagemagick ghostscript gnupg zip
-RUN (curl -sL "https://deb.nodesource.com/setup_18.x" | bash -) \
+RUN (curl -sL "https://deb.nodesource.com/setup_22.x" | bash -) \
       && apt-get install -y nodejs
 
 RUN adduser --disabled-password --home ${APP_PATH} userapp
