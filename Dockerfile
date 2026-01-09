@@ -45,7 +45,7 @@ FROM base AS preprod
 ENV APP_PATH /app
 
 # set environnment variable
-COPY .env.test .env
+COPY .env.example .env
 
 #----- minimum set of packages
 RUN apt-get update && apt-get install -y curl git postgresql-client libicu76 poppler-utils imagemagick ghostscript gnupg zip
