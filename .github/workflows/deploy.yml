@@ -42,7 +42,7 @@ jobs:
           repository: ${{ github.repository }}
           path: './hnoel'
       - name: Merge checkout repositories
-        run: mv ./hnoel/* ./ && rmdir ./hnoel
+        run: cp -r ./hnoel/* ./ && rm -rf ./hnoel
         shell: bash
       - name: echo postgres container ip
         id: postgres_ip
