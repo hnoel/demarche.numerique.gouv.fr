@@ -1,3 +1,4 @@
+[![.github/workflows/deploy.yml](https://github.com/hnoel/demarche.numerique.gouv.fr/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/hnoel/demarche.numerique.gouv.fr/actions/workflows/deploy.yml)
 # demarches-simplifiees.fr
 
 > [!NOTE]
