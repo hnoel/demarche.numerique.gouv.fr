@@ -34,11 +34,13 @@ jobs:
     steps:
       - name: 'Checkout repo "https://github.com/demarche-numerique/demarche.numerique.gouv.fr"'
         uses: actions/checkout@v6
-        repository: 'demarche-numerique/demarche.numerique.gouv.fr/'
+        with:
+          repository: 'demarche-numerique/demarche.numerique.gouv.fr/'
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Merge previous checkout repository with current repository
         uses: actions/checkout@v6
-        repository: ${{ github.repository }}
+        with:
+          repository: ${{ github.repository }}
       - name: echo postgres container ip
         id: postgres_ip
         run: echo "POSTGRES=$(hostname -I | awk '{print $1}')" >> "$GITHUB_OUTPUT"
