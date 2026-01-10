@@ -78,7 +78,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          sbom: true
+          #sbom : true
         env:
           # reproducible build
           SOURCE_DATE_EPOCH: 0
@@ -190,8 +190,8 @@ jobs:
           PROCEDURE_DEFAULT_LOGO_SRC: "polynesie.png"
           RAILS_ENV: "production"
           RAILS_LOG_TO_STDOUT: ""
-          RAILS_SERVE_STATIC_FILES: true
-          RUBY_YJIT_ENABLE: true
+          RAILS_SERVE_STATIC_FILES: "true"
+          RUBY_YJIT_ENABLE: "true"
           SAML_IDP_ENABLED: ""
           SAML_IDP_CERTIFICATE: "billybop"
           SAML_IDP_SECRET_KEY: "-----BEGIN RSA PRIVATE KEY----- blab-----END RSA PRIVATE KEY-----"
@@ -227,7 +227,7 @@ jobs:
           WATERMARK_FILE: "watermark_pf.png"
           WEASYPRINT_URL: "http://weasyprint:5000/pdf"
           YAHOO_CLIENT_ID: ""
-          YAHOO_CLIENT_SECRET: ""          
+          YAHOO_CLIENT_SECRET: ""
       # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
       #- name: Generate artifact attestation
       #  uses: actions/attest-build-provenance@v2
