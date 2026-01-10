@@ -20,7 +20,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 FROM base AS builder
 
 RUN apt-get update && \
-    apt-get install -y curl build-essential git libpq-dev libicu-dev zlib1g-dev libyaml-dev gnupg zip nodejs && \
+    apt-get install --no-install-recommends -y curl build-essential git libpq-dev libicu-dev zlib1g-dev libyaml-dev gnupg zip && \
     (curl -sL "https://deb.nodesource.com/setup_22.x" | bash -) && \
     apt-get install -y nodejs && \
     apt-get clean && \
@@ -32,19 +32,18 @@ WORKDIR ${INSTALL_PATH}
 COPY Gemfile Gemfile.lock ./
 
 # sassc https://github.com/sass/sassc-ruby/issues/146#issuecomment-608489863
-RUN bundle config specific_platform x86_64-linux \
-  && bundle config build.sassc --disable-march-tune-native \
-    && bundle config deployment true \
-       && bundle config without "development test" \
-         && bundle install
+RUN bundle config specific_platform x86_64-linux && \
+    bundle config build.sassc --disable-march-tune-native && \
+    bundle config deployment true && \
+    bundle config without "development test" && \
+    bundle install
 
 #---------------------------------------------------------------------------------
 #  App/Worker container
 #---------------------------------------------------------------------------------
 FROM base AS preprod
-ENV APP_PATH /app
-ENV \
-    ACTIVE_STORAGE_SERVICE="s3" \
+ENV APP_PATH="/app"
+ENV ACTIVE_STORAGE_SERVICE="s3" \
     AGENT_CONNECT_ENABLED="" \
     AGENT_CONNECT_ID="" \
     AGENT_CONNECT_SECRET="" \
@@ -191,9 +190,12 @@ ENV \
     YAHOO_CLIENT_SECRET=""
 
 #----- minimum set of packages
-RUN apt-get update && apt-get install -y curl git postgresql-client libicu76 poppler-utils imagemagick ghostscript gnupg zip
-RUN (curl -sL "https://deb.nodesource.com/setup_22.x" | bash -) \
-      && apt-get install -y nodejs
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y curl git postgresql-client libicu76 poppler-utils imagemagick ghostscript gnupg zip && \
+    (curl -sL "https://deb.nodesource.com/setup_22.x" | bash -) && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --home ${APP_PATH} userapp
 USER userapp
@@ -213,11 +215,11 @@ RUN .bun/bin/bun install --production
 #cf https://imagetragick.com/
 COPY --chown=userapp:userapp --from=builder /app ${APP_PATH}/
 
-RUN bundle config specific_platform x86_64-linux \
-      && bundle config build.sassc --disable-march-tune-native \
-        && bundle config deployment true \
-          && bundle config without "development test" \
-            && bundle install
+RUN bundle config specific_platform x86_64-linux && \
+    bundle config build.sassc --disable-march-tune-native && \
+    bundle config deployment true && \
+    bundle config without "development test" && \
+    bundle install
 
 COPY --chown=userapp:userapp . ${APP_PATH}
 RUN chmod a+x $APP_PATH/app/lib/*.sh
