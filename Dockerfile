@@ -20,8 +20,8 @@ RUN bun install --frozen-lockfile --production
 # Building gems requires dev librairies we don't need in production container
 #--------------------------------------------------
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION
-FROM dhi.io/ruby:${RUBY_VERSION:3}-debian13-dev AS base
+#ARG RUBY_VERSION
+FROM dhi.io/ruby:3-debian13-dev AS base
 #FROM docker.io/ruby:3.4.5 AS base
 
 # Avoid warnings by switching to noninteractive
