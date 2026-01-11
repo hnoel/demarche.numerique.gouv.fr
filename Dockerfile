@@ -22,7 +22,7 @@ RUN bun install --frozen-lockfile --production
 #--------------------------------------------------
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.5
-FROM dhi.io/ruby:$RUBY_VERSION AS base
+FROM dhi.io/ruby:3 AS base
 
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
