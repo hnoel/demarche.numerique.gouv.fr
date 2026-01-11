@@ -8,7 +8,7 @@
 #---------------------------------------------------------------------------------
 # Build node_modules dependencies using Bun image
 #---------------------------------------------------------------------------------
-FROM dhi.io/bun:1-debian13 AS bun
+FROM dhi.io/bun:1-debian13-dev AS bun
 WORKDIR /app
 COPY package.json bun.lock* ./
 COPY patches ./patches/
@@ -20,9 +20,9 @@ RUN bun install --frozen-lockfile --production
 # Building gems requires dev librairies we don't need in production container
 #--------------------------------------------------
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.4.5
-#FROM dhi.io/ruby:3 AS base
-FROM docker.io/ruby:3.4.5 AS base
+ARG RUBY_VERSION
+FROM dhi.io/ruby:${RUBY_VERSION:3}-debian13-dev AS base
+#FROM docker.io/ruby:3.4.5 AS base
 
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
