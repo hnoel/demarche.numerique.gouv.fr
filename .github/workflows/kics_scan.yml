@@ -31,7 +31,7 @@ jobs:
           repository: ${{ github.repository }}
           path: './hnoel'
       - name: Merge checkout repositories
-        run: cp -r ./hnoel/* ./ && rm -rf ./hnoel
+        run: cp -r ./hnoel/* ./ #&& rm -rf ./hnoel
         shell: bash
       - name: Mkdir results-dir
         # make sure results dir is created
@@ -61,6 +61,9 @@ jobs:
       #     # Optional category for the results
       #     # Used to differentiate multiple results for one commit
       #     category: kics-scanner
+      - name: set up repository for Docker compose linter
+        run: cd hnoel
+        shell: bash
       - name: dclint
         uses: docker-compose-linter/dclint-github-action/reviewdog-action@v1.6.0
         with:
