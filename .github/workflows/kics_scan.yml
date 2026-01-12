@@ -12,6 +12,13 @@ on:
 jobs:
   kics-job:
     runs-on: ubuntu-latest
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
     name: kics-action
     steps:
       - name: 'Checkout repo "https://github.com/demarche-numerique/demarche.numerique.gouv.fr"'
@@ -33,7 +40,7 @@ jobs:
         uses: checkmarx/kics-github-action@v2.1.19
         with:
           path: ./
-# when provided with a directory on output_path
+          # when provided with a directory on output_path
           # it will generate the specified reports file named 'results.{extension}'
           # in this example it will generate:
           # - results-dir/results.json
@@ -47,6 +54,10 @@ jobs:
           cat results-dir/results.sarif
           cat results-dir/results.json
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
+          # Path to SARIF file relative to the root of the repository
           sarif_file: results-dir/results.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: kics-scanner
