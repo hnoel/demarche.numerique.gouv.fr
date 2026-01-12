@@ -1,0 +1,47 @@
+---
+name: scan with KICS and upload SARIF
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  kics-job:
+    runs-on: ubuntu-latest
+    name: kics-action
+    steps:
+      - name: 'Checkout repo "https://github.com/demarche-numerique/demarche.numerique.gouv.fr"'
+        uses: actions/checkout@v6
+        with:
+          repository: 'demarche-numerique/demarche.numerique.gouv.fr'
+      - name: 'Checkout repo "https://github.com/hnoel/demarche.numerique.gouv.fr" into "./hnoel"'
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}
+          path: './hnoel'
+      - name: Merge checkout repositories
+        run: cp -r ./hnoel/* ./ && rm -rf ./hnoel
+        shell: bash
+      - name: Mkdir results-dir
+        # make sure results dir is created
+        run: mkdir -p results-dir
+      - name: Run KICS Scan with SARIF result
+        uses: checkmarx/kics-github-action@v2.1.19
+        with:
+          # when provided with a directory on output_path
+          # it will generate the specified reports file named 'results.{extension}'
+          # in this example it will generate:
+          # - results-dir/results.json
+          # - results-dir/results.sarif
+          ignore_on_exit: results
+          output_path: results-dir
+          enable_comments: true
+          output_formats: 'json,sarif'
+      - name: Show results
+        run: |
+          cat results-dir/results.sarif
+          cat results-dir/results.json
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results-dir/results.sarif
