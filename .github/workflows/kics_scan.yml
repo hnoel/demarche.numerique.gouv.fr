@@ -31,7 +31,11 @@ jobs:
           repository: ${{ github.repository }}
           path: './hnoel'
       - name: Merge checkout repositories
-        run: cp -r ./hnoel/* ./ #&& rm -rf ./hnoel
+        run: |
+          cp -r ./hnoel/* . && 
+          rm -rf ./.git &&
+          mv ./hnoel/.git . && 
+          rm -rf ./hnoel
         shell: bash
       - name: Mkdir results-dir
         # make sure results dir is created
