@@ -1,0 +1,20 @@
+---
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+spec:
+  host: {{ .Values.route.host }}
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-{{ .Chart.Name }}
+  port:
+    targetPort: http
+  {{- if .Values.route.tls }}
+  tls:
+    termination: edge
+    insecureSkipVerification: false
+  {{- end }}
+{{- end }}
+...

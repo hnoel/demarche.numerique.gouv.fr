@@ -1,0 +1,67 @@
+---
+name: Release Helm Charts (GitHub Pages)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'charts/**'
+
+jobs:
+  helm-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+
+    steps:
+      - name: Git repository checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Helm installation
+        uses: azure/setup-helm@v3
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1
+        with:
+          charts_dir: 'charts'
+          config: './.github/configs/cr.yaml'
+          pages_branch: gh-pages
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+#      - name: Pack du chart
+#        working-directory: charts
+#        run: |
+#          helm lint demarche-numerique
+#          helm package demarche-numerique --destination ../packages
+#
+#      - name: Mettre à jour l'index du repo
+#        working-directory: packages
+#        run: |
+#          # Create 'index.yaml' if not already create
+#          if [ ! -f ../gh-pages/index.yaml ]; then
+#            helm repo index . --url https://github.io/hnoel/demarche.numerique.gouv.fr
+#          else
+#            helm repo index . --url https://github.io/hnoel/demarche.numerique.gouv.fr --merge ../gh-pages/index.yaml
+#          fi
+#
+#      - name: Publish chart on 'gh-pages' branch
+#        run: |
+#          git checkout --orphan gh-pages
+#          git rm -rf .
+#          mkdir -p packages
+#          cp -r packages/* .
+#          cp packages/index.yaml .
+#          git add .
+#          git commit -m "🚀 Publication du chart v$(git describe --tags --abbrev=0 || echo '0.1.0')"
+#          git push --force origin gh-pages
+...

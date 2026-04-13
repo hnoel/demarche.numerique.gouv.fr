@@ -1,0 +1,22 @@
+---
+# SPDX-License-Identifier: AGPL-3.0-or-later
+apiVersion: v2
+name: demarche-numerique
+version: 0.1.0 # version du chart (à incrémenter)
+description: A Helm chart for deploying french government website 'demarche.numerique.gouv.fr' on an OpenShift like Kubernetes cluster
+type: application
+license: "AGPL-3.0"
+keywords:
+  - demarche-numerique
+  - openshift
+  - helm
+home: https://github.com/hnoel/demarche.numerique.gouv.fr
+sources:
+  - https://github.com/demarche-numerique/demarche.numerique.gouv.fr
+maintainers:
+  - name: henri NOËL
+    email: hnoel@users.noreply.github.com
+icon: https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg
+appVersion: "2026-04-13-01"
+deprecated: false
+...
