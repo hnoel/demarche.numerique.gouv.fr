@@ -48,11 +48,12 @@ jobs:
           ignore_on_exit: results
           output_path: results-dir
           enable_comments: true
-          output_formats: 'json,sarif'
-      - name: Show results
-        run: |
-          cat results-dir/results.sarif
-          cat results-dir/results.json
+          output_formats: 'sarif'
+      - name: Upload Kics results
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: results-dir/results.sarif
       # - name: Upload SARIF file (require paid subscription)
       #   uses: github/codeql-action/upload-sarif@v4
       #   with:
@@ -61,15 +62,16 @@ jobs:
       #     # Optional category for the results
       #     # Used to differentiate multiple results for one commit
       #     category: kics-scanner
-      - name: set up repository for Docker compose linter
-        run: cd hnoel
-        shell: bash
-      - name: dclint
-        uses: docker-compose-linter/dclint-github-action/reviewdog-action@v1.6.0
-        with:
-          reporter: github-pr-review # Default is `github-pr-check`
-          dclint_flags: ./ # Default is `.`
+      # - name: set up repository for Docker compose linter
+      #   run: cd hnoel
+      #   shell: bash
+      # - name: dclint
+      #   uses: docker-compose-linter/dclint-github-action/reviewdog-action@v1.6.0
+      #   with:
+      #     reporter: github-pr-review # Default is `github-pr-check`
+      #     dclint_flags: ./ # Default is `.`
       # - uses: docker-compose-linter/dclint-github-action@v1.6.0
       #   with:
       #     path: ./
       #     recursive: true
+...
