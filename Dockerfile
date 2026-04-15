@@ -53,8 +53,11 @@ RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN adduser --disabled-password --home ${APP_PATH} userapp
-USER userapp
+# RUN adduser --disabled-password --home ${APP_PATH} userapp
+# USER userapp
+# Runtime user compatibility for both OpenShift and Kubernetes.
+USER 1001
+RUN chown -R 1001:0 ${APP_PATH}
 WORKDIR ${APP_PATH}
 
 ADD image_magick_policy.xml /etc/ImageMagick-6/policy.xml
@@ -64,12 +67,12 @@ FROM preprod AS prod
 RUN (curl -fsSL https://bun.sh/install | bash)
 COPY package.json bun.lock* ./
 COPY patches ./patches/
-COPY --chown=userapp:userapp --from=bun /app/node_modules ${APP_PATH}/node_modules
+COPY --chown=1001:0 --from=bun /app/node_modules ${APP_PATH}/node_modules
 RUN .bun/bin/bun install --production
 
 #----- Bundle gems: copy from builder container the dependency gems
 #cf https://imagetragick.com/
-COPY --chown=userapp:userapp --from=builder /app ${APP_PATH}/
+COPY --chown=1001:0 --from=builder /app ${APP_PATH}/
 
 RUN bundle config specific_platform x86_64-linux && \
     bundle config build.sassc --disable-march-tune-native && \
@@ -77,7 +80,7 @@ RUN bundle config specific_platform x86_64-linux && \
     bundle config without "development test" && \
     bundle install
 
-COPY --chown=userapp:userapp . ${APP_PATH}
+COPY --chown=1001:0 . ${APP_PATH}
 RUN chmod a+x $APP_PATH/app/lib/*.sh
 
 ENV \
@@ -236,9 +239,9 @@ RUN rm -rf CONTRIBUTING.fr.md  CONTRIBUTING.md  README.fr.md  README.md  SECURIT
 #---------------------------------------------------------------------------------
 FROM preprod AS prod-slim
 # copy bundle config
-COPY --chown=userapp:userapp --from=prod /usr/local/bundle/config /usr/local/bundle/config
+COPY --chown=1001:0 --from=prod /usr/local/bundle/config /usr/local/bundle/config
 # copy 'slim' app folder 
-COPY --chown=userapp:userapp --from=prod /app ${APP_PATH}/
+COPY --chown=1001:0 --from=prod /app ${APP_PATH}/
 
 EXPOSE 3000
 ENTRYPOINT ["/app/app/lib/docker-entry-point.sh"]
