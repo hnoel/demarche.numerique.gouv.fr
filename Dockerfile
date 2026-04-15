@@ -53,11 +53,9 @@ RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN adduser --disabled-password --home ${APP_PATH} userapp
+# Runtime user compatibility for both OpenShift and Kubernetes : group=0
+RUN adduser --disabled-password --home ${APP_PATH} userapp 0
 USER userapp
-# Runtime user compatibility for both OpenShift and Kubernetes.
-RUN chgrp -R 0 ${APP_PATH} && \ 
-    chmod -R g=u ${APP_PATH}
 WORKDIR ${APP_PATH}
 
 ADD image_magick_policy.xml /etc/ImageMagick-6/policy.xml
