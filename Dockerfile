@@ -59,7 +59,6 @@ RUN /usr/bin/apt-get update && \
 RUN mkdir -p ${APP_PATH} && \
     chgrp -R 0 ${APP_PATH} && \ 
     chmod -R g=u ${APP_PATH}
-USER 1001
 WORKDIR ${APP_PATH}
 
 ADD image_magick_policy.xml /etc/ImageMagick-6/policy.xml
@@ -240,6 +239,7 @@ RUN rm -rf CONTRIBUTING.fr.md  CONTRIBUTING.md  README.fr.md  README.md  SECURIT
 #  App/Worker container-slim
 #---------------------------------------------------------------------------------
 FROM preprod AS prod-slim
+USER 1001
 # copy bundle config
 COPY --chown=1001:0 --from=prod /usr/local/bundle/config /usr/local/bundle/config
 # copy 'slim' app folder 
