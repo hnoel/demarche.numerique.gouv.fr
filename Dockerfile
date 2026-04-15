@@ -54,9 +54,6 @@ RUN /usr/bin/apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --home ${APP_PATH} userapp
-# Runtime user compatibility for both OpenShift and Kubernetes
-RUN chgrp -R 0 ${APP_PATH}/ && \
-    chmod -R g=u ${APP_PATH}/
 USER userapp
 WORKDIR ${APP_PATH}
 
@@ -242,7 +239,13 @@ FROM preprod AS prod-slim
 COPY --chown=userapp:userapp --from=prod /usr/local/bundle/config /usr/local/bundle/config
 # copy 'slim' app folder 
 COPY --chown=userapp:userapp --from=prod /app ${APP_PATH}/
-    
+
+# Runtime user compatibility for both OpenShift and Kubernetes
+USER root
+RUN chgrp -R 0 ${APP_PATH}/ && \
+    chmod -R g=u ${APP_PATH}/
+USER userapp
+
 EXPOSE 3000
 ENTRYPOINT ["/app/app/lib/docker-entry-point.sh"]
 CMD ["rails", "server", "-b", "0.0.0.0"]
