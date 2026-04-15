@@ -53,8 +53,7 @@ RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Runtime user compatibility for both OpenShift and Kubernetes : group=0
-RUN adduser --disabled-password --home ${APP_PATH} userapp 0
+RUN adduser --disabled-password --home ${APP_PATH} userapp
 USER userapp
 WORKDIR ${APP_PATH}
 
@@ -65,12 +64,12 @@ FROM preprod AS prod
 RUN (curl -fsSL https://bun.sh/install | bash)
 COPY package.json bun.lock* ./
 COPY patches ./patches/
-COPY --chown=userapp:0 --from=bun /app/node_modules ${APP_PATH}/node_modules
+COPY --chown=userapp:userapp --from=bun /app/node_modules ${APP_PATH}/node_modules
 RUN .bun/bin/bun install --production
 
 #----- Bundle gems: copy from builder container the dependency gems
 #cf https://imagetragick.com/
-COPY --chown=userapp:0 --from=builder /app ${APP_PATH}/
+COPY --chown=userapp:userapp --from=builder /app ${APP_PATH}/
 
 RUN bundle config specific_platform x86_64-linux && \
     bundle config build.sassc --disable-march-tune-native && \
@@ -78,7 +77,7 @@ RUN bundle config specific_platform x86_64-linux && \
     bundle config without "development test" && \
     bundle install
 
-COPY --chown=userapp:0 . ${APP_PATH}
+COPY --chown=userapp:userapp . ${APP_PATH}
 RUN chmod a+x $APP_PATH/app/lib/*.sh
 
 ENV \
@@ -237,10 +236,14 @@ RUN rm -rf CONTRIBUTING.fr.md  CONTRIBUTING.md  README.fr.md  README.md  SECURIT
 #---------------------------------------------------------------------------------
 FROM preprod AS prod-slim
 # copy bundle config
-COPY --chown=userapp:0 --from=prod /usr/local/bundle/config /usr/local/bundle/config
+COPY --chown=userapp:userapp --from=prod /usr/local/bundle/config /usr/local/bundle/config
 # copy 'slim' app folder 
-COPY --chown=userapp:0 --from=prod /app ${APP_PATH}/
+COPY --chown=userapp:userapp --from=prod /app ${APP_PATH}/
 
+# Runtime user compatibility for both OpenShift and Kubernetes
+RUN chgrp -R 0 ${APP_PATH}/ && \
+    chmod -R g=u ${APP_PATH}/
+    
 EXPOSE 3000
 ENTRYPOINT ["/app/app/lib/docker-entry-point.sh"]
 CMD ["rails", "server", "-b", "0.0.0.0"]
