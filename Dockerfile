@@ -29,11 +29,12 @@ RUN /usr/bin/apt-get update && \
 ENV INSTALL_PATH=/app
 RUN mkdir -p ${INSTALL_PATH}
 WORKDIR ${INSTALL_PATH}
-COPY Gemfile Gemfile.lock ./
+#COPY Gemfile Gemfile.lock ./
+COPY Gemfile  ./
 
 # sassc https://github.com/sass/sassc-ruby/issues/146#issuecomment-608489863
-RUN bundle config specific_platform x86_64-linux && \
-    bundle config build.sassc --disable-march-tune-native && \
+#RUN bundle config specific_platform x86_64-linux && \
+RUN bundle config build.sassc --disable-march-tune-native && \
     bundle config deployment true && \
     bundle config without "development test" && \
     bundle install
