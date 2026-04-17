@@ -73,7 +73,8 @@ RUN /usr/local/bin/bun install --production
 #cf https://imagetragick.com/
 COPY --chown=userapp:userapp --from=builder /app ${APP_PATH}/
 
-RUN bundle config specific_platform x86_64-linux && \
+#RUN bundle config specific_platform x86_64-linux && \
+RUN bundle lock --update --add-platform arm64-linux && \
     bundle config build.sassc --disable-march-tune-native && \
     bundle config deployment true && \
     bundle config without "development test" && \
