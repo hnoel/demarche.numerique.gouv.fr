@@ -3,6 +3,28 @@ entries:
   demarche-numerique:
   - apiVersion: v2
     appVersion: 2026-04-13-01
+    created: "2026-04-17T21:41:17.219162347Z"
+    description: A Helm chart for deploying french government website 'demarche.numerique.gouv.fr'
+      on an OpenShift like Kubernetes cluster
+    digest: 29aaed0dd3ba8157db8cb4dc4ce121ef34d9d6c064dc94bcff45bc935b24640d
+    home: https://github.com/hnoel/demarche.numerique.gouv.fr
+    icon: https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg
+    keywords:
+    - demarche-numerique
+    - openshift
+    - helm
+    maintainers:
+    - email: hnoel@users.noreply.github.com
+      name: henri NOËL
+    name: demarche-numerique
+    sources:
+    - https://github.com/demarche-numerique/demarche.numerique.gouv.fr
+    type: application
+    urls:
+    - https://github.com/hnoel/demarche.numerique.gouv.fr/releases/download/demarche-numerique-0.1.1/demarche-numerique-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 2026-04-13-01
     created: "2026-04-13T21:14:28.91950066Z"
     description: A Helm chart for deploying french government website 'demarche.numerique.gouv.fr'
       on an OpenShift like Kubernetes cluster
@@ -23,4 +45,4 @@ entries:
     urls:
     - https://github.com/hnoel/demarche.numerique.gouv.fr/releases/download/demarche-numerique-0.1.0/demarche-numerique-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-13T21:14:28.919514706Z"
+generated: "2026-04-17T21:41:17.219197232Z"
