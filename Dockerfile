@@ -1,18 +1,18 @@
 #---------------------------------------------------------------------------------
 # Build node_modules dependencies using Bun image
 #---------------------------------------------------------------------------------
-FROM oven/bun:1 AS bun
+FROM docker.io/oven/bun:1.3 AS bun
 WORKDIR /app
 COPY package.json bun.lock* ./
 COPY patches ./patches/
-RUN bun install --frozen-lockfile --production
+RUN bun install --frozen-lockfile --production --minify
 
 #--------------------------------------------------
 # Builder
 # Intermediate container to bundle all gems
 # Building gems requires dev librairies we don't need in production container
 #--------------------------------------------------
-FROM ruby:3.4.5-slim AS base
+FROM docker.io/ruby:3.4.5-slim AS base
 
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
@@ -61,11 +61,12 @@ ADD image_magick_policy.xml /etc/ImageMagick-6/policy.xml
 
 FROM preprod AS prod
 #----- Building js dependencies (node_modules)
-RUN (curl -fsSL https://bun.sh/install | bash)
+#RUN (curl -fsSL https://bun.sh/install | bash) # Warning: install 'bun' in current user 'home' folder
+COPY --chown=userapp:userapp --from=bun /usr/local/bin/bun /usr/local/bin/bun
 COPY package.json bun.lock* ./
 COPY patches ./patches/
 COPY --chown=userapp:userapp --from=bun /app/node_modules ${APP_PATH}/node_modules
-RUN .bun/bin/bun install --production
+RUN /usr/local/bin/bun install --production
 
 #----- Bundle gems: copy from builder container the dependency gems
 #cf https://imagetragick.com/
