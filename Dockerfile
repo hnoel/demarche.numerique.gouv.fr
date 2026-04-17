@@ -33,7 +33,7 @@ COPY Gemfile Gemfile.lock ./
 
 # sassc https://github.com/sass/sassc-ruby/issues/146#issuecomment-608489863
 # RUN bundle config specific_platform x86_64-linux && \
-RUN bundle lock --update --add-platform arm64-linux &&
+RUN bundle lock --update --add-platform arm64-linux && \
     bundle config build.sassc --disable-march-tune-native && \
     bundle config deployment true && \
     bundle config without "development test" && \
