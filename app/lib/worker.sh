@@ -1,22 +1,26 @@
 #!/bin/sh
-
+# See origin: https://stackoverflow.com/a/62955241
 # Variable DELAYED_JOB_ARGS contains the arguments for delayed jobs for, e.g. defining queues and worker pools.
 
 # function that is called when the docker container should stop. It stops the delayed job processes
 _term() {
   echo "Caught SIGTERM signal! Stopping delayed jobs !"
   # unbind traps
+  trap - SIGTERM
   trap - TERM
+  trap - SIGINT
   trap - INT
-  # end delayed jobs
+  # end delayed jobs 
   bundle exec "./bin/delayed_job ${DELAYED_JOB_ARGS} stop"
 
   exit
 }
 
 # register handler for selected signals
+trap _term SIGTERM
 trap _term TERM
 trap _term INT
+trap _term SIGINT
 
 echo "Starting delayed jobs ... with ARGs \"${DELAYED_JOB_ARGS}\""
 
