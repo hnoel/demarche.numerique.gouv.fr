@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------------
 # Build node_modules dependencies using Bun image
 #---------------------------------------------------------------------------------
-FROM oven/bun:1 AS bun
+FROM docker.io/oven/bun:1 AS bun
 WORKDIR /app
 COPY package.json bun.lock* ./
 COPY patches ./patches/
@@ -12,7 +12,7 @@ RUN bun install --frozen-lockfile --production
 # Intermediate container to bundle all gems
 # Building gems requires dev librairies we don't need in production container
 #--------------------------------------------------
-FROM ruby:3.4.5-slim AS base
+FROM registry.redhat.io/hi/ruby:3.4.8-fips-1776438114 AS base
 
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
