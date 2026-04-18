@@ -1,11 +1,14 @@
 #---------------------------------------------------------------------------------
-# Build node_modules dependencies using Bun image
+# Containerize a Bun application with Docker: 
+# - https://bun.com/docs/guides/ecosystem/docker
+#   1. install dependencies in production mode (exclude devDependencies)
 #---------------------------------------------------------------------------------
-FROM docker.io/oven/bun:1 AS bun
-WORKDIR /app
-COPY package.json bun.lock* ./
-COPY patches ./patches/
-RUN bun install --frozen-lockfile --production
+FROM docker.io/oven/bun:1.3 AS bun
+WORKDIR /usr/src/app
+RUN mkdir -p /tmp/prod
+COPY package.json bun.lock* /tmp/prod
+COPY patches /tmp/prod/patches/
+RUN cd /tmp/prod && bun install --frozen-lockfile --production
 
 #--------------------------------------------------
 # Builder
@@ -41,7 +44,7 @@ RUN bundle config specific_platform x86_64-linux && \
 #---------------------------------------------------------------------------------
 #  App/Worker container
 #---------------------------------------------------------------------------------
-FROM base AS preprod
+FROM base AS prerelease
 ENV APP_PATH="/app"
 ENV PATH="${PATH}:${APP_PATH}/.bun/bin"
 
@@ -59,8 +62,15 @@ WORKDIR ${APP_PATH}
 
 ADD image_magick_policy.xml /etc/ImageMagick-6/policy.xml
 
-FROM preprod AS prod
+FROM prerelease AS prod
 #----- Building js dependencies (node_modules)
+# 2. copy node_modules into the image
+FROM base AS prerelease
+COPY --chown=userapp:userapp --from=install /tmp/prod/node_modules node_modules
+COPY --chown=userapp:userapp --from=install /tmp/prod/patches ./patches/
+COPY --chown=userapp:userapp --from=prerelease /usr/src/app/index.ts ./
+COPY --chown=userapp:userapp --from=prerelease /usr/src/app/package.json ./
+
 RUN (curl -fsSL https://bun.sh/install | bash)
 COPY package.json bun.lock* ./
 COPY patches ./patches/
@@ -234,7 +244,7 @@ RUN rm -rf CONTRIBUTING.fr.md  CONTRIBUTING.md  README.fr.md  README.md  SECURIT
 #---------------------------------------------------------------------------------
 #  App/Worker container-slim
 #---------------------------------------------------------------------------------
-FROM preprod AS prod-slim
+FROM prerelease AS prod-slim
 # copy bundle config
 COPY --chown=userapp:userapp --from=prod /usr/local/bundle/config /usr/local/bundle/config
 # copy 'slim' app folder 
