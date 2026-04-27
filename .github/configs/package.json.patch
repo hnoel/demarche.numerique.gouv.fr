@@ -1,9 +1,9 @@
 diff --git a/package.json b/package.json
 --- a/package.json
 +++ b/package.json
-@@ -1,4 +1,18 @@
+@@ -1,4 +1,21 @@
  {
-+  "name": "demarche.numerique.gouv.fr",
++  "name": "@hnoel/demarche.numerique.gouv.fr",
 +  "version": "1.0.0",
 +  "author": "Your Name <email@example.com> (https://example.com)",
 +  "repository": {
@@ -17,7 +17,8 @@ diff --git a/package.json b/package.json
 +    "url": "https://github.com/hnoel/demarche.numerique.gouv.fr/issues"
 +  },
 +  "homepage": "https://github.com/hnoel/demarche.numerique.gouv.fr",
++  "publishConfig": {
++    "@hnoel:registry": "https://npm.pkg.github.com"
++  },
    "type": "module",
-   "dependencies": {
-     "@formatjs/intl-listformat": "^8.3.1",
 -- 
