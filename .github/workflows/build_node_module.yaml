@@ -1,0 +1,45 @@
+---
+name: Build and package node_module
+
+# Configures this workflow to run manually or every time a change is pushed to the branch called `master`.
+on:
+  workflow_dispatch: {}
+  push:
+    branches: ['main']
+
+# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
+jobs:
+  build_node_module:
+    name: my-job
+    runs-on: ubuntu-latest
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: 'Checkout repo "https://github.com/demarche-numerique/demarche.numerique.gouv.fr"'
+        uses: actions/checkout@v6
+        with:
+          repository: 'demarche-numerique/demarche.numerique.gouv.fr'
+      - name: 'Checkout repo "https://github.com/hnoel/demarche.numerique.gouv.fr" into "./hnoel"'
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}
+          path: './hnoel'
+      - name: Merge checkout repositories
+        run: cp -r ./hnoel/* ./ && rm -rf ./hnoel
+        shell: bash
+      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
+      - name: Setup bun 
+        uses: oven-sh/setup-bun@v2
+      # run any `bun` or `bunx` command
+      - name: Package node_module 
+        run: bun publish --registry https://npm.pkg.github.com
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+...
