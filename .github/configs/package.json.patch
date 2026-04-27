@@ -21,4 +21,4 @@ diff --git a/package.json b/package.json
 +    "@hnoel:registry": "https://npm.pkg.github.com"
 +  },
    "type": "module",
--- 
+   "dependencies": {
