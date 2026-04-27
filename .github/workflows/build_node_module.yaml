@@ -15,7 +15,7 @@ env:
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build_node_module:
-    name: my-job
+    name: build-node_module
     runs-on: ubuntu-latest
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
@@ -31,11 +31,11 @@ jobs:
         with:
           repository: ${{ github.repository }}
           path: './hnoel'
+      - name: Patch 'package.json'
+        run: patch ./package.json < ./hnoel/.github/configs/package.json.patch
+        shell: bash
       - name: Merge checkout repositories
         run: cp -r ./hnoel/* ./ && rm -rf ./hnoel
-        shell: bash
-      - name: Patch 'package.json'
-        run: patch ./package.json < .github/configs/package.json.patch
         shell: bash
       # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       - name: Setup bun 
